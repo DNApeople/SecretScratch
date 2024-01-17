@@ -29,14 +29,18 @@
    ~~~~~~
 
 4. Examples
-   i. Normal enbed
+   i. Normal embed
    ~~~
-      $ python SecretScratch.py --embed embed_this_file.txt --input input_file.sb3 --output output_file.sb3 
+      $ python SecretScratch.py --embed embed_this_secret.txt --input input_file.sb3 --output output_file_with_secret.sb3 
    ~~~
    ii. Normal extract
    ~~~
       $ python SecretScratch.py --extract --input file_with_secret.sb3 --output extracted_file.txt 
    ~~~
-   
+   iii. Encrypted embed
+   ~~~
+      $ python SecretScratch.py --embed embed_this_file.txt --encrypt --input input_file.sb3 --output output_file_with_encrypted_secret.sb3
+   ~~~
+      [+] Decrypt token => input_file.dec.json
 
    
