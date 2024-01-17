@@ -3,7 +3,7 @@
 1. Requirements 
    Cryptodome
    ~~~
-      $ pip install Cryptodome
+   $ pip install pycryptodome
    ~~~
 
 3. Usage
