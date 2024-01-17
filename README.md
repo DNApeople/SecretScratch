@@ -51,8 +51,9 @@
 
 5. What you must consider.
 
-   . The .sb3 file used for embedding the secret must have an adequate number of "in project comments" (more than a 100).
+   [=] The .sb3 file used for embedding the secret must have an adequate number of "in project comments" (more than a 100).
       Which I tried to automate but scratch just keeps rejecting them unless manually added.
       The "test.sb3" already has a 100 comment headstart, so use that & add to it.
-   . When adding comments they must be spread across multiple sprites, because scratch Dosen't allow toomany comments in a single sprite
+   
+   [=] When adding comments they must be spread across multiple sprites, because scratch Dosen't allow toomany comments in a single sprite
       
