@@ -8,6 +8,10 @@
 
 3. Usage
 
+
+   https://github.com/DNApeople/SecretScratch/assets/112553123/4ac45935-cc1c-498c-a102-f7fc95533abc
+
+
    python SecretScratch.py -h
    ~~~~~~
    usage: SecretScratch.py [-h] (-em EMBED | -ex) -i INPUT -o OUTPUT [-enc | -dec DECRYPT]
