@@ -56,4 +56,6 @@
       The "test.sb3" already has a 100 comment headstart, so use that & add to it.
    
    [=] When adding comments they must be spread across multiple sprites, because scratch Dosen't allow toomany comments in a single sprite
+
+   [=] This method dosen't support large files as it is impractical to add thousands of comment boxes manually (but nothing stops you from trying)
       
