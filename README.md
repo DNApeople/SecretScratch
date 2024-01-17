@@ -4,7 +4,9 @@
    Cryptodome (pip install Cryptodome)
 
 2. Usage
-   """
+
+   SecretScratch.py -h
+   ~~~~~~
    usage: SecretScratch.py [-h] (-em EMBED | -ex) -i INPUT -o OUTPUT [-enc | -dec DECRYPT]
 
    SecretScratch file embeder/extractor.
@@ -21,4 +23,4 @@
   -enc, --encrypt       Encrypt embeding data
   -dec DECRYPT, --decrypt DECRYPT
                         Decrypt extracted data (-dec/--decrypt <keys.json>)
-   """
+   ~~~~~~
