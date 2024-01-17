@@ -29,6 +29,7 @@
    ~~~~~~
 
 4. Examples
+   
    i. Normal embed
    ~~~
    $ python SecretScratch.py --embed embed_this_secret.txt --input input_file.sb3 --output output_file_with_secret.sb3 
