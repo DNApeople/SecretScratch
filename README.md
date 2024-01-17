@@ -3,7 +3,7 @@
 1. Requirements 
    Cryptodome
    ~~~
-      pip install Cryptodome
+      $ pip install Cryptodome
    ~~~
 
 3. Usage
@@ -27,3 +27,16 @@
            -dec DECRYPT, --decrypt DECRYPT
                                  Decrypt extracted data (-dec/--decrypt <keys.json>)
    ~~~~~~
+
+4. Examples
+   i. Normal enbed
+   ~~~
+      $ python SecretScratch.py --embed embed_this_file.txt --input input_file.sb3 --output output_file.sb3 
+   ~~~
+   ii. Normal extract
+   ~~~
+      $ python SecretScratch.py --extract --input file_with_secret.sb3 --output extracted_file.txt 
+   ~~~
+   
+
+   
