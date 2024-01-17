@@ -1,6 +1,6 @@
 # SecretScratch
 
-_Inspired by Steghide tool__
+_Inspired by Steghide tool_
 
 1. Requirements 
    Cryptodome
@@ -66,5 +66,7 @@ _Inspired by Steghide tool__
    [=] When adding comments they must be spread across multiple sprites, because scratch Dosen't allow toomany comments in a single sprite
 
    [=] This method dosen't support large files as it is impractical to add thousands of comment boxes manually (but nothing stops you from trying)
+
+   [=] __Don't attach comments to blocks, insted meke them for the sprite__ (example : test/test.sb3 has example comments)
 
       
