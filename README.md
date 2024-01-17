@@ -1,5 +1,7 @@
 # SecretScratch
 
+_Inspired by Steghide tool__
+
 1. Requirements 
    Cryptodome
    ~~~
@@ -53,6 +55,8 @@
    $ python SecretScratch.py --extract --decrypt decrypt_token.dec.json --input file_with_encrypted_secret.sb3 --output secret.txt
    ~~~
 
+   __(+) Now upload the file to scratch & now you have some free cloud storage.__
+
 5. What you must consider.
 
    [=] The .sb3 file used for embedding the secret must have an adequate number of "in project comments" (more than a 100).
@@ -62,4 +66,5 @@
    [=] When adding comments they must be spread across multiple sprites, because scratch Dosen't allow toomany comments in a single sprite
 
    [=] This method dosen't support large files as it is impractical to add thousands of comment boxes manually (but nothing stops you from trying)
+
       
