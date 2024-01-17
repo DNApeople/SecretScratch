@@ -1,11 +1,14 @@
 # SecretScratch
 
 1. Requirements 
-   Cryptodome (pip install Cryptodome)
+   Cryptodome
+   ~~~
+      pip install Cryptodome
+   ~~~
 
-2. Usage
+3. Usage
 
-   SecretScratch.py -h
+   python SecretScratch.py -h
    ~~~~~~
    usage: SecretScratch.py [-h] (-em EMBED | -ex) -i INPUT -o OUTPUT [-enc | -dec DECRYPT]
 
