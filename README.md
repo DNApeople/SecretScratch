@@ -5,7 +5,7 @@ _Inspired by Steghide tool_
 1. Requirements 
    Cryptodome
    ~~~
-   $ pip install pycryptodome
+   pip install -r requirements.txt
    ~~~
 
 3. Usage
