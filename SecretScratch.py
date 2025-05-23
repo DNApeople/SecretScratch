@@ -165,19 +165,6 @@ def autoremove():
     print(f"[+] autoremoved {dump_path}")
     
 def main():
-    # infile = "test.sb3"
-    # entries, json_data = load_entries(infile)
-
-    # with open("/bin/ls", "rb") as ls:
-    #     data = ls.read()
-
-    # embed(json_data, entries, data, "test2.sb3", True)
-
-    # os.chdir(wd)
-
-    # entries, _ = load_entries("test2.sb3")
-
-    # extract(entries, "lsdup", "test2.sb3.dcr.json")
     parser = argparse.ArgumentParser(description='SecretScratch file embeder/extractor.')
 
     EmbExt  = parser.add_mutually_exclusive_group(required=True)
