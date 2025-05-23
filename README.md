@@ -10,9 +10,7 @@ _Inspired by Steghide tool_
 
 3. Usage
 
-
    https://github.com/DNApeople/SecretScratch/assets/112553123/4ac45935-cc1c-498c-a102-f7fc95533abc
-
 
    python SecretScratch.py -h
    ~~~~~~
@@ -51,7 +49,7 @@ _Inspired by Steghide tool_
    ~~~
       [+] Decrypt token => input_file.sb3.dcr.json
    
-   vi. Decrypt encrypted embed & extract.
+   vi. Extract & decrypt
    ~~~
    $ python SecretScratch.py --extract --decrypt decrypt_token.dec.json --input file_with_encrypted_secret.sb3 --output secret.txt
    ~~~
