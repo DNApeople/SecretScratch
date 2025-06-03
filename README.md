@@ -1,71 +1,70 @@
 # SecretScratch
 
-_Inspired by Steghide tool_
+## Overview 
 
-1. Requirements 
-   Cryptodome
-   ~~~
-   pip install -r requirements.txt
-   ~~~
+`SecretScratch` is a proof of concept [steganography](https://en.wikipedia.org/wiki/Steganography) tool used to embed files into scratch projects (`.sb3`files) & retrieve them.
 
-3. Usage
+## Installation
 
-   https://github.com/DNApeople/SecretScratch/assets/112553123/4ac45935-cc1c-498c-a102-f7fc95533abc
+clone the repository
 
-   python SecretScratch.py -h
-   ~~~~~~
-   usage: SecretScratch.py [-h] (-em EMBED | -ex) -i INPUT -o OUTPUT [-enc | -dec DECRYPT]
+```
+git clone https://github.com/DNApeople/SecretScratch.git
+```
 
-   SecretScratch file embeder/extractor.
+install requirements
 
-   options:
-           -h, --help            show this help message and exit
-           -em EMBED, --embed EMBED
-                                 File to be embeded.
-           -ex, --extract        extract from <input.sb3>
-           -i INPUT, --input INPUT
-                                 Scratch .sb3 file.
-           -o OUTPUT, --output OUTPUT
-                                 Output file (Can be used with -em/--embed & -ex/--extract)
-           -enc, --encrypt       Encrypt embeding data
-           -dec DECRYPT, --decrypt DECRYPT
-                                 Decrypt extracted data (-dec/--decrypt <keys.json>)
-   ~~~~~~
+```
+pip install -r requirements.txt
+```
 
-4. Examples
-   
-   i. Normal embed
-   ~~~
-   $ python SecretScratch.py --embed embed_this_secret.txt --input input_file.sb3 --output output_file_with_secret.sb3 
-   ~~~
-   ii. Normal extract
-   ~~~
-   $ python SecretScratch.py --extract --input file_with_secret.sb3 --output extracted_file.txt 
-   ~~~
-   
-   iii. Encrypted embed (recommended)
-   ~~~
-   $ python SecretScratch.py --embed embed_this_file.txt --encrypt --input input_file.sb3 --output output_file_with_encrypted_secret.sb3
-   ~~~
-      [+] Decrypt token => input_file.sb3.dcr.json
-   
-   vi. Extract & decrypt
-   ~~~
-   $ python SecretScratch.py --extract --decrypt decrypt_token.dec.json --input file_with_encrypted_secret.sb3 --output secret.txt
-   ~~~
+## Usage
 
-   __(+) Now upload the file to scratch & now you have some free cloud storage.__
+1. Unprotected embed
 
-6. What you must consider.
+```
+$ python SecretScratch.py embedd --input <secret file> --cover <cover file> --output <output file>
+```
 
-   [=] The .sb3 file used for embedding the secret must have an adequate number of "in project comments" (more than a 100).
-      Which I tried to automate but scratch just keeps rejecting them unless manually added.
-      The "test.sb3" already has a 100 comment headstart, so use that & add to it.
-   
-   [=] When adding comments they must be spread across multiple sprites, because scratch Dosen't allow toomany comments in a single sprite
+The `cover file` is generally a scratch project with multiple unattached (not attached to code blocks) comments spread across multiple sprites.
 
-   [=] This method dosen't support large files as it is impractical to add thousands of comment boxes manually (but nothing stops you from trying)
+The `output file` would be the compound file of the `secret` and `cover`
 
-   [=] __Don't attach comments to blocks, insted meke them for the sprite__ (example : test/test.sb3 has example comments)
+2. Unprotected extract
 
-      
+Extract from local project file
+
+```
+$ python3 scratchembed_v2.py extract --local <local project> --output <extracted file> 
+```
+
+Extract file directly from uploaded project (on [scratch](https://scratch.mit.edu))
+
+**UPLOADING UNENCRYPTED DATA IS NOT RECOMMENDED**
+
+```
+$ python3 scratchembed_v2.py extract --webproject <project id> --output <extracted file> 
+```
+
+3. Encrypted embed
+
+```
+$ python SecretScratch.py embedd --input <secret file> --cover <cover file> --output <output file> --encrypt
+```
+
+The only difference would be the `--encrypt` flag
+
+Once done with the decryption the token would be saved to `<cover file>.dcr.json`. The file **CAN NOT BE DECRYPTED** without the token.
+
+4. Encrypted extract
+
+To extract encrypted data from either local or remote files the decryption token must be passed in via the `--decrypt <token>.dcr.json`
+
+**IF YOU PLAN ON UPLOADING A FILE IT'S BEST TO ENCRYPT IT.**
+
+## When creating a cover file
+
+- Make sure the comments aren't attached to code blocks.
+- And that they are distributed among multiple sprites.
+- Also that there is a sufficient amount of comments to embed your file (like, a LOT of them)
+- If your want a quick test file, use the `test/test.sb3` file.
