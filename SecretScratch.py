@@ -6,6 +6,7 @@ from math import ceil
 import base64
 import lzma
 import hashlib
+import requests
 import textwrap
 import argparse
 from Crypto.Random import get_random_bytes
@@ -18,10 +19,44 @@ from time import sleep
 wd = os.getcwd()
 dump_path = path.join(wd, "project_dump")
 
+class JsonExtract:
+    @staticmethod
+    def local(project_file: str, extract_dir: str) -> dict:
+        with zipfile.ZipFile(project_file, "r") as project:
+            project.extractall(dump_path)
+
+        with open(path.join(extract_dir, "project.json"), "r") as project_json:
+            json_data = json.loads(project_json.read()) 
+        
+        return json_data
+
+    @staticmethod
+    def web(project_id: int) -> dict:
+        session = requests.Session()
+        project_id = str(project_id)
+
+        public_data = session.get(
+            f"https://api.scratch.mit.edu/projects/{project_id}"
+        )
+
+        public_data_json = public_data.json()
+
+        try:
+            project_token = public_data_json["project_token"]
+        except KeyError:
+            if public_data_json["code"] == "NotFound":
+                raise Exception(f"ProjectNotFoundError: project of id:{project_id} not found")
+
+        project_code = session.get(
+            f"https://projects.scratch.mit.edu/{project_id}?token={project_token}"
+        )
+
+        return project_code.json()
+
 def sha56sum(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
-def load_entries(infile: str) -> tuple[dict, dict]:
+def load_entriesx(project_json: str) -> dict:
     entries = {
         "sprites" : [],
         "comment_ids" : [],
@@ -29,21 +64,15 @@ def load_entries(infile: str) -> tuple[dict, dict]:
         "other_data" : None
     }
 
-    with zipfile.ZipFile(infile, "r") as project:
-        project.extractall(dump_path)
-
-    with open(path.join(dump_path, "project.json"), "r") as project_json:
-        json_data = json.loads(project_json.read()) 
-
-    entries["sprites"] = json_data["targets"][1:]
-    entries["other_data"] = json_data["targets"][0]
+    entries["sprites"] = project_json["targets"][1:]
+    entries["other_data"] = project_json["targets"][0]
 
     for i in range(len(entries["sprites"])):
         sprite_comments = list(entries["sprites"][i]["comments"].keys())
         entries["comment_ids"].append(sprite_comments)
         entries["total_comments"] += len(sprite_comments)
 
-    return entries, json_data
+    return entries
 
 def embed(project_json: dict, entries: dict, data: bytes, outfile: str, encrypted: bool) -> None:
     data = lzma.compress(data)
@@ -156,36 +185,51 @@ def extract(entries: dict, outfile: str, decrypt_token : str | None = "") -> Non
     autoremove()
     
 def autoremove():
-    for file in os.listdir(dump_path):
-        os.remove(path.join(dump_path, file))
-    os.chdir(wd)
-    sleep(0.1)
-    os.rmdir(dump_path)
+    if path.exists(dump_path):
+        for file in os.listdir(dump_path):
+            os.remove(path.join(dump_path, file))
+        os.chdir(wd)
+        sleep(0.1)
+        os.rmdir(dump_path)
 
-    print(f"[+] autoremoved {dump_path}")
+        print(f"[+] autoremoved {dump_path}")
     
 def main():
-    parser = argparse.ArgumentParser(description='SecretScratch file embeder/extractor.')
+    parser = argparse.ArgumentParser(description='SecretScratch file embedder/extractor.')
+    subparsers = parser.add_subparsers(dest='action')
 
-    EmbExt  = parser.add_mutually_exclusive_group(required=True)
-    EmbExt.add_argument('-em','--embed', help="File to be embeded.")
-    EmbExt.add_argument('-ex','--extract',action='store_true', help="extract from <input.sb3>")
-    parser.add_argument('-i','--input',required=True, help="Scratch .sb3 file.")
-    parser.add_argument('-o','--output',required=True, help="Output file (Can be used with -em/--embed & -ex/--extract)")
+    embed_sub = subparsers.add_parser('embed')
+    embed_sub.add_argument('-i', '--input', required=True, action="store", type=str, help="File to embed")
+    embed_sub.add_argument('-c', '--cover', required=True, action="store", type=str, help="Cover file (scratch project)")
+    embed_sub.add_argument('-o', '--output', required=True, action="store", type=str, help="Output file")
+    embed_sub.add_argument('-enc','--encrypt',action="store_true", help="Encrypt data")
 
-    encrypt = parser.add_mutually_exclusive_group()
-    encrypt.add_argument('-enc','--encrypt',action='store_true', help="Encrypt embeding data")
-    encrypt.add_argument('-dec','--decrypt', help="Decrypt extracted data (-dec/--decrypt <keys.json>)")
-    args = parser.parse_args() 
+    extract_sub = subparsers.add_parser('extract')
+    web_local = extract_sub.add_mutually_exclusive_group(required=True)
+    web_local.add_argument('-web', '--webproject', action="store", type=int, help="Download project by <project_id>")
+    web_local.add_argument('-loc', '--localfile', action="store", type=str, help="Local project file")
+    extract_sub.add_argument('-o', '--output', required=True, action="store", type=str, help="Output file")
+    extract_sub.add_argument('-dec','--decrypt',action="store", type=str, help="Decrypt data --decrypt <token.json>")
 
-    if args.embed:
-        with open(args.embed, "rb") as file:
+    args = parser.parse_args()
+
+    action = args.action
+
+    if action == "embed":
+        with open(args.input, "rb") as file:
             data = file.read()
-        entries, json_data = load_entries(args.input)
-        embed(json_data, entries, data, args.output, args.encrypt)
-    elif args.extract:
-        entries, _ = load_entries(args.input)
+        project_json = JsonExtract.local(args.cover, dump_path)
+        entries = load_entriesx(project_json)
+        embed(project_json, entries, data, args.output, args.encrypt)
+    elif action == "extract":
+        if args.webproject:
+            project_json = JsonExtract.web(args.webproject)   
+        else:
+            project_json = JsonExtract.local(args.localfile, dump_path)
+        entries = load_entriesx(project_json)
         extract(entries, args.output, args.decrypt)
+    else:
+        parser.parse_args(['--help'])
 
 if __name__ == "__main__":
     main()
