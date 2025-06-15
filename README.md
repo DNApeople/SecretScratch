@@ -2,7 +2,7 @@
 
 ## Overview 
 
-`SecretScratch` is a proof of concept [steganography](https://en.wikipedia.org/wiki/Steganography) tool used to embed files into scratch projects (`.sb3`files) & retrieve them. Essentially turning [scratch](hrrps://scratch.mit.edu) to a hosing platform (at least for smaller files)
+`SecretScratch` is a proof of concept [steganography](https://en.wikipedia.org/wiki/Steganography) tool used to embed files into scratch projects (`.sb3`files) & retrieve them. Essentially turning [scratch](hrrps://scratch.mit.edu) to a hosing platform for any type of file(at least for smaller files).
 
 ## Installation
 
