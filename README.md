@@ -40,7 +40,7 @@ $ python3 SecretScratch.py extract --local <local project> --output <extracted f
 
 Extract file directly from uploaded project (on [scratch](https://scratch.mit.edu))
 
-**UPLOADING UNENCRYPTED DATA IS NOT RECOMMENDED**
+**UPLOADING SENSITIVE DATA UNENCRYPTED IS NOT RECOMMENDED**
 
 ```
 $ python3 SecretScratch.py extract --webproject <project id> --output <extracted file> 
