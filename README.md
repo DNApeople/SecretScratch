@@ -35,7 +35,7 @@ The `output file` would be the compound file of the `secret` and `cover`
 Extract from local project file
 
 ```
-$ python3 scratchembed_v2.py extract --local <local project> --output <extracted file> 
+$ python3 SecretScratch.py extract --local <local project> --output <extracted file> 
 ```
 
 Extract file directly from uploaded project (on [scratch](https://scratch.mit.edu))
@@ -43,7 +43,7 @@ Extract file directly from uploaded project (on [scratch](https://scratch.mit.ed
 **UPLOADING UNENCRYPTED DATA IS NOT RECOMMENDED**
 
 ```
-$ python3 scratchembed_v2.py extract --webproject <project id> --output <extracted file> 
+$ python3 SecretScratch.py extract --webproject <project id> --output <extracted file> 
 ```
 
 3. Encrypted embed
