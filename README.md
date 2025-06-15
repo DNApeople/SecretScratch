@@ -67,4 +67,4 @@ To extract encrypted data from either local or remote files the decryption token
 - Make sure the comments aren't attached to code blocks.
 - And that they are distributed among multiple sprites.
 - Also that there is a sufficient amount of comments to embed your file (like, a LOT of them)
-- If your want a quick test file, use the `test/test.sb3` file.
+- If your want a quick test file, use the `test/test.sb3` file. (can handle a 1.4MB with 100 comment fields)
