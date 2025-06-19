@@ -81,7 +81,7 @@ def load_entries(project_json: str) -> dict:
 
     return entries
 
-def embed(project_json: dict, data: bytes, outfile: str, encrypted: bool, blocks_per_sprite: int):
+def embed(project_json: dict, data: bytes, outfile: str, encrypted: bool, blocks_per_sprite: int) -> None:
     data = lzma.compress(data)
     charlimit = 8000
     comments_per_sprite = blocks_per_sprite
