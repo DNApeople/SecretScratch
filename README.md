@@ -58,13 +58,10 @@ Once done with the decryption the token would be saved to `<cover file>.dcr.json
 
 4. Encrypted extract
 
-To extract encrypted data from either local or remote files the decryption token must be passed in via the `--decrypt <token>.dcr.json`
+To extract encrypted data from either local or remote files the decryption token (genarated when file was embedded) must be passed in via the `--decrypt <token>.dcr.json`
 
 **IF YOU PLAN ON UPLOADING A FILE IT'S BEST TO ENCRYPT IT.**
 
-## When creating a cover file
-
-- Make sure the comments aren't attached to code blocks.
-- And that they are distributed among multiple sprites.
-- Also that there is a sufficient amount of comments to embed your file (like, a LOT of them)
-- If your want a quick test file, use the `test/test.sb3` file. (can handle a 1.4MB with 100 comment fields)
+## When creating a cover file, it shold have
+- At least one sprite, with
+- At least one comment for the sprite (not attached to code blocks).
