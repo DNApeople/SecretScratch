@@ -5,10 +5,13 @@ import json
 from math import ceil
 import base64
 import lzma
+import gzip
 import hashlib
 import requests
 import textwrap
 import argparse
+import string
+import random
 from Crypto.Random import get_random_bytes
 from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Cipher import AES
@@ -56,7 +59,11 @@ class JsonExtract:
 def sha56sum(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
-def load_entriesx(project_json: str) -> dict:
+def getrandstr(length: int) -> str:
+    ascii_chars = string.ascii_letters + string.digits
+    return ''.join(random.choices(ascii_chars, k=length))
+
+def load_entries(project_json: str) -> dict:
     entries = {
         "sprites" : [],
         "comment_ids" : [],
@@ -74,11 +81,23 @@ def load_entriesx(project_json: str) -> dict:
 
     return entries
 
-def embed(project_json: dict, entries: dict, data: bytes, outfile: str, encrypted: bool) -> None:
+def embed(project_json: dict, data: bytes, outfile: str, encrypted: bool, blocks_per_sprite: int):
     data = lzma.compress(data)
     charlimit = 8000
+    comments_per_sprite = blocks_per_sprite
 
     decrypt_token = {"password": "", "salt": "", "data_hash": ""}
+    comment_format = {
+        "blockId": None,
+        "x": 0,
+        "y": 0,
+        "width": 200,
+        "height": 200,
+        "minimized": True,
+        "text": ""
+    }
+    targets = project_json["targets"]
+    sprite = targets[1]
 
     if encrypted:
         ekey = sha56sum(get_random_bytes(32))
@@ -93,37 +112,52 @@ def embed(project_json: dict, entries: dict, data: bytes, outfile: str, encrypte
         decrypt_token["data_hash"] = sha56sum(data)
     
     data_b64 = base64.b64encode(data).decode()
-    comments_needed = ceil(len(data)/charlimit)
+    comments_needed = ceil(len(data_b64)/charlimit)
+    sprites_needed = ceil(comments_needed/comments_per_sprite)
 
-    if comments_needed > entries["total_comments"]:
-        autoremove()
-        raise Exception(f"Comments needef for embed: {comments_needed}, but found {entries["total_comments"]}")
-    
+    if comments_needed == comments_per_sprite:
+        tail_count = 0
+    elif comments_needed < comments_per_sprite:
+        tail_count = comments_needed
+    else:
+        tail_count = comments_needed % comments_per_sprite
+
     data_blocks = textwrap.wrap(data_b64, charlimit)
 
-    breaker = False
-    blocks_written   = 0
-    for i, sprite in enumerate(entries["sprites"]):
-        if breaker:
-            break
-        print(f"\n[+] sprite: {sprite["name"]}")
-        for j, comment_id in enumerate(entries["comment_ids"][i]):
-            if blocks_written >= len(data_blocks):
-                breaker = True
-                break
-            print(f"\t[ block: {str(blocks_written + 1)} => comment: ({str(j+1)} id: {comment_id})]")
-            sprite["comments"][comment_id]["text"] = data_blocks[blocks_written]
-            sprite["comments"][comment_id]["minimized"] = True
-            sprite["comments"][comment_id]["x"] = -20000
-            sprite["comments"][comment_id]["y"] = 9000
+    new_sprites = []
+    blocks_written = 0
+
+    for i in range(sprites_needed):
+        sprite_cp = sprite.copy()
+        sprite_name = f"sprite_{i}"
+        print(f"\n[+] sprite: {sprite_name}")
+        sprite_cp["name"] = sprite_name
+
+        new_comments = {}
+
+        if (tail_count > 0) and (i+1 == sprites_needed):
+            comments_per_sprite = tail_count
+
+        for j in range(comments_per_sprite):
+            comment_cp = comment_format.copy()
+
+            comment_cp["text"] = data_blocks[blocks_written]
+            comment_cp["minimized"] = True
+            comment_cp["x"] = -20000
+            comment_cp["y"] = 9000
+
+            comment_id = getrandstr(20)
+            new_comments[comment_id] = comment_cp
             blocks_written += 1
 
-    project_json["targets"] = []
-    project_json["targets"].append(entries["other_data"])
+            print(f"\t[ block: {str(blocks_written)} => comment: ({str(j+1)} id: {comment_id})]")
+        
+        sprite_cp["comments"] = new_comments
+        new_sprites.append(sprite_cp)
 
-    for sprite in entries["sprites"]:
-        project_json["targets"].append(sprite)
-    
+    new_targets = [targets[0], *new_sprites]
+    project_json["targets"] = new_targets
+
     with open(path.join(dump_path, "project.json"), "w") as project:
         project.write(json.dumps(project_json, indent=4))
 
@@ -219,14 +253,13 @@ def main():
         with open(args.input, "rb") as file:
             data = file.read()
         project_json = JsonExtract.local(args.cover, dump_path)
-        entries = load_entriesx(project_json)
-        embed(project_json, entries, data, args.output, args.encrypt)
+        embed(project_json, data, args.output, args.encrypt, 100)
     elif action == "extract":
         if args.webproject:
             project_json = JsonExtract.web(args.webproject)   
         else:
             project_json = JsonExtract.local(args.localfile, dump_path)
-        entries = load_entriesx(project_json)
+        entries = load_entries(project_json)
         extract(entries, args.output, args.decrypt)
     else:
         parser.parse_args(['--help'])
